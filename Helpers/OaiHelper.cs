@@ -1,4 +1,4 @@
-﻿using System.Text;
+using System.Text;
 using Standard.AI.OpenAI.Clients.OpenAIs;
 using Standard.AI.OpenAI.Models.Configurations;
 using Standard.AI.OpenAI.Models.Services.Foundations.ChatCompletions;
@@ -9,6 +9,12 @@ namespace AI_XML_Doc.Helpers
     {
         private readonly OpenAIClient _openAIClient;
 
+        /// <summary>
+        /// Initializes a new instance of the OaiHelper class with the specified API key.
+        /// </summary>
+        /// <param name="apiKey">The API key to use for authentication.</param>
+        /// <returns>A new instance of the OaiHelper class.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when apiKey is null or empty.</exception>
         public OaiHelper(string apiKey)
         {
             var openAIConfigurations = new OpenAIConfigurations()
@@ -19,6 +25,12 @@ namespace AI_XML_Doc.Helpers
             _openAIClient = new OpenAIClient(openAIConfigurations);
         }
 
+        /// <summary>
+        /// Generates an XML documentation comment for a given function in the specified language, or English by default. The comment includes a brief description of what the function does, its parameters, and its return value. The comment also provides guidance on including necessary tags such as <param>, <exceptions>, and <returns> to provide additional information about each part of the function.
+        /// </summary>
+        /// <param name="function">The function for which to generate the XML documentation comment.</param>
+        /// <param name="language">The language in which to generate the XML documentation comment. If null, English will be used by default.</param>
+        /// <returns>The generated XML documentation comment as a string.</returns>
         public async ValueTask<string> GenerateXmlDocComment(string function, string? language)
         {
             var sb = new StringBuilder();

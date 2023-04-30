@@ -12,20 +12,42 @@ namespace AI_XML_Doc
         private List<ProjectFile> _toBeGeneratedFiles = new();
         private string? _language;
 
+        /// <summary>
+        /// Initializes a new instance of the Form1 class.
+        /// </summary>
+        /// <remarks>
+        /// This constructor calls the InitializeComponent method to initialize the form's components.
+        /// </remarks>
         public Form1()
         {
             InitializeComponent();
         }
 
+        /// <summary>
+        /// This function is called when the Form1 is loaded. It sets the default language in the languageComboBox and updates the language of the form.
+        /// </summary>
+        /// <param name="sender">The object that raised the event.</param>
+        /// <param name="e">The EventArgs associated with the event.</param>
         private void Form1_Load(object sender, EventArgs e)
         {
             languageComboBox.SelectedIndex = 0;
             UpdateLanguage();
         }
 
+        /// <summary>
+        /// Updates the selected language based on the value of the languageComboBox.
+        /// </summary>
+        /// <returns>Void.</returns>
+        /// <exception cref="System.NullReferenceException">Thrown when languageComboBox.SelectedItem is null.</exception>
         private void UpdateLanguage() =>
-            _language = languageComboBox.SelectedItem.ToString();
+                    _language = languageComboBox.SelectedItem.ToString();
 
+        /// <summary>
+        /// Handles the click event of the search button to open a folder browser dialog and set the project path text box to the selected path.
+        /// </summary>
+        /// <param name="sender">The object that raised the event.</param>
+        /// <param name="e">The event arguments.</param>
+        /// <returns>Void.</returns>
         private void btnSearch_Click(object sender, EventArgs e)
         {
             using var fbd = new FolderBrowserDialog();
@@ -36,6 +58,13 @@ namespace AI_XML_Doc
             }
         }
 
+        /// <summary>
+        /// Retrieves all C# files from the specified project path and populates the _projectFiles list with ProjectFile objects representing each file. Also updates the list box items with the retrieved files.
+        /// </summary>
+        /// <returns>Void</returns>
+        /// <exception cref="System.IO.DirectoryNotFoundException">Thrown when the specified project path is not found.</exception>
+        /// <exception cref="System.UnauthorizedAccessException">Thrown when the specified project path is inaccessible due to permission restrictions.</exception>
+        /// <exception cref="System.ArgumentException">Thrown when the specified project path is empty or consists only of white space characters.</exception>
         private void GetFilesFromProjectPath()
         {
             _projectFiles = new();
@@ -52,6 +81,10 @@ namespace AI_XML_Doc
             UpdateListBoxItems();
         }
 
+        /// <summary>
+        /// Clears and updates the items in the projectFilesListBox and filesToGenerateListBox based on the current state of the _projectFiles and _toBeGeneratedFiles lists.
+        /// </summary>
+        /// <returns>Void</returns>
         private void UpdateListBoxItems()
         {
             projectFilesListBox.Items.Clear();
@@ -60,6 +93,13 @@ namespace AI_XML_Doc
             _toBeGeneratedFiles.ForEach(file => filesToGenerateListBox.Items.Add(file.DisplayName));
         }
 
+        /// <summary>
+        /// Moves selected items from projectFilesListBox to _toBeGeneratedFiles list and removes them from _projectFiles list. 
+        /// </summary>
+        /// <param name="sender">The object that raised the event.</param>
+        /// <param name="e">The event arguments.</param>
+        /// <returns>Void.</returns>
+        /// <exception cref="System.InvalidOperationException">Thrown when no items are selected in projectFilesListBox.</exception>
         private void btnMoveToRight_Click(object sender, EventArgs e)
         {
             var selectedItems = projectFilesListBox.SelectedItems.Cast<string>()
@@ -80,6 +120,13 @@ namespace AI_XML_Doc
             UpdateListBoxItems();
         }
 
+        /// <summary>
+        /// Moves selected items from filesToGenerateListBox to _projectFiles list and removes them from _toBeGeneratedFiles list.
+        /// </summary>
+        /// <param name="sender">The object that raised the event.</param>
+        /// <param name="e">The event arguments.</param>
+        /// <returns>Void.</returns>
+        /// <exception cref="System.InvalidOperationException">Thrown when no items are selected in filesToGenerateListBox.</exception>
         private void btnMoveToLeft_Click(object sender, EventArgs e)
         {
             var selectedItems = filesToGenerateListBox.SelectedItems.Cast<string>()
@@ -100,6 +147,15 @@ namespace AI_XML_Doc
             UpdateListBoxItems();
         }
 
+        /// <summary>
+        /// Generates documentation for a list of files based on their content and updates them if necessary.
+        /// </summary>
+        /// <param name="sender">The object that raised the event.</param>
+        /// <param name="e">The event arguments.</param>
+        /// <returns>Void.</returns>
+        /// <exception cref="System.IO.FileNotFoundException">Thrown when one of the files to be generated is not found.</exception>
+        /// <exception cref="System.UnauthorizedAccessException">Thrown when the user does not have permission to access one of the files.</exception>
+        /// <exception cref="System.IO.IOException">Thrown when an I/O error occurs while reading or writing a file.</exception>
         private async void btnGenerateDocs_Click(object sender, EventArgs e)
         {
             if (_toBeGeneratedFiles.Count <= 0
@@ -120,6 +176,12 @@ namespace AI_XML_Doc
             Enabled = true;
         }
 
+        /// <summary>
+        /// Processes the functions in a C# file and generates XML documentation comments for any functions that do not already have them.
+        /// </summary>
+        /// <param name="fileContent">The content of the C# file to process.</param>
+        /// <returns>The updated content of the C# file with any newly generated XML documentation comments.</returns>
+        /// <exception cref="ArgumentNullException">Thrown if fileContent is null.</exception>
         public async ValueTask<string> ProcessFunctions(string fileContent)
         {
             var syntaxTree = CSharpSyntaxTree.ParseText(fileContent);
@@ -144,6 +206,11 @@ namespace AI_XML_Doc
             return fileContent;
         }
 
+        /// <summary>
+        /// Event handler for when the languageComboBox's selected index changes.
+        /// </summary>
+        /// <param name="sender">The object that raised the event.</param>
+        /// <param name="e">The event arguments.</param>
         private void languageComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             UpdateLanguage();
