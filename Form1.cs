@@ -125,24 +125,23 @@ namespace AI_XML_Doc
             var syntaxTree = CSharpSyntaxTree.ParseText(fileContent);
             var root = syntaxTree.GetCompilationUnitRoot();
 
-            var methods = root.DescendantNodes().OfType<MethodDeclarationSyntax>().ToList();
-
+            var methods = root.DescendantNodes().OfType<BaseMethodDeclarationSyntax>();
             foreach (var method in methods)
             {
-                var oaiHelper = new OaiHelper(apiKeyTextBox.Text);
-                var methodSignature = method.ToString();
-                var xmlComment = await oaiHelper.GenerateXmlDocComment(methodSignature, _language);
+                var hasXmlDocComment = method.GetLeadingTrivia()
+                    .Any(trivia => trivia.IsKind(SyntaxKind.SingleLineDocumentationCommentTrivia) || trivia.IsKind(SyntaxKind.MultiLineDocumentationCommentTrivia));
 
-                // Prepend the XML documentation comment to the method
-                var triviaList = new SyntaxTriviaList();
-                triviaList = triviaList.Add(SyntaxFactory.ParseLeadingTrivia(xmlComment).First());
-                var newMethod = method.WithLeadingTrivia(triviaList);
+                if (!hasXmlDocComment)
+                {
+                    var oaiHelper = new OaiHelper(apiKeyTextBox.Text);
+                    var methodSignature = method.ToString();
+                    var xmlComment = await oaiHelper.GenerateXmlDocComment(methodSignature, _language);
 
-                // Replace the original method with the new one in the syntax tree
-                root = root.ReplaceNode(method, newMethod);
+                    fileContent = fileContent.Replace(methodSignature, $"{xmlComment}\n{methodSignature}");
+                }
             }
 
-            return root.ToFullString();
+            return fileContent;
         }
 
         private void languageComboBox_SelectedIndexChanged(object sender, EventArgs e)
