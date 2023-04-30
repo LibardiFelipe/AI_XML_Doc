@@ -1,4 +1,3 @@
-using System.IO;
 using System.Text.RegularExpressions;
 using AI_XML_Doc.Helpers;
 using AI_XML_Doc.Models;
@@ -9,6 +8,7 @@ namespace AI_XML_Doc
     {
         private List<ProjectFile> _projectFiles = new();
         private List<ProjectFile> _toBeGeneratedFiles = new();
+        private string? _language;
 
         public Form1()
         {
@@ -17,8 +17,12 @@ namespace AI_XML_Doc
 
         private void Form1_Load(object sender, EventArgs e)
         {
-
+            languageComboBox.SelectedIndex = 0;
+            UpdateLanguage();
         }
+
+        private void UpdateLanguage() =>
+            _language = languageComboBox.SelectedItem.ToString();
 
         private void btnSearch_Click(object sender, EventArgs e)
         {
@@ -123,12 +127,17 @@ namespace AI_XML_Doc
             {
                 var oaiHelper = new OaiHelper(apiKeyTextBox.Text);
                 var function = match.Value;
-                var xmlComment = await oaiHelper.GenerateXmlDocComment(function, "português");
+                var xmlComment = await oaiHelper.GenerateXmlDocComment(function, _language);
 
                 fileContent = fileContent.Replace(function, $"{xmlComment}\n{function}");
             }
 
             return fileContent;
+        }
+
+        private void languageComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            UpdateLanguage();
         }
     }
 }
