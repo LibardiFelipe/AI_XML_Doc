@@ -1,6 +1,8 @@
-using System.Text.RegularExpressions;
 using AI_XML_Doc.Helpers;
 using AI_XML_Doc.Models;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace AI_XML_Doc
 {
@@ -120,19 +122,27 @@ namespace AI_XML_Doc
 
         public async ValueTask<string> ProcessFunctions(string fileContent)
         {
-            string regexPattern = @"((public|private|protected|internal)\s+(static\s+)?(\w+\s+)?(\w+)\s*(<\w+>)?\s*\(([^)]*)\)\s*(\n|\r|\r\n)\s*{(?:[^{}]+|\s*(?<o>{)|\s*(?<c-o>})|(?<c>;))*\s*})";
-            var matches = Regex.Matches(fileContent, regexPattern);
+            var syntaxTree = CSharpSyntaxTree.ParseText(fileContent);
+            var root = syntaxTree.GetCompilationUnitRoot();
 
-            foreach (var match in matches.Cast<Match>())
+            var methods = root.DescendantNodes().OfType<MethodDeclarationSyntax>().ToList();
+
+            foreach (var method in methods)
             {
                 var oaiHelper = new OaiHelper(apiKeyTextBox.Text);
-                var function = match.Value;
-                var xmlComment = await oaiHelper.GenerateXmlDocComment(function, _language);
+                var methodSignature = method.ToString();
+                var xmlComment = await oaiHelper.GenerateXmlDocComment(methodSignature, _language);
 
-                fileContent = fileContent.Replace(function, $"{xmlComment}\n{function}");
+                // Prepend the XML documentation comment to the method
+                var triviaList = new SyntaxTriviaList();
+                triviaList = triviaList.Add(SyntaxFactory.ParseLeadingTrivia(xmlComment).First());
+                var newMethod = method.WithLeadingTrivia(triviaList);
+
+                // Replace the original method with the new one in the syntax tree
+                root = root.ReplaceNode(method, newMethod);
             }
 
-            return fileContent;
+            return root.ToFullString();
         }
 
         private void languageComboBox_SelectedIndexChanged(object sender, EventArgs e)

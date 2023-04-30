@@ -26,7 +26,7 @@ namespace AI_XML_Doc.Helpers
             sb.AppendLine("You have been asked to provide XML documentation comments for each function to help other developers understand how to use them.");
             sb.AppendLine($"Given the function that I will further provide you, write the XML documentation comment for it IN {(language ?? "english").ToUpper()}, including a brief description of what the function does, its parameters, and its return value.");
             sb.AppendLine("Make sure to include any necessary tags, such as <param>, <exceptions> and <returns>, to provide additional information about each part of the function.");
-            sb.AppendLine("Please provide only the XML documentation comment, not the function declaration and or implementation.");
+            sb.AppendLine("IMPORTANT: Please provide ONLY THE XML documentation comment.");
 
             sb.AppendLine("Function:");
             sb.AppendLine("````");
@@ -38,7 +38,7 @@ namespace AI_XML_Doc.Helpers
                 Request = new ChatCompletionRequest
                 {
                     Model = "gpt-3.5-turbo",
-                    MaxTokens = 1024,
+                    MaxTokens = 2048,
                     Temperature = 0.2D,
                     Messages = new ChatCompletionMessage[]
                     {

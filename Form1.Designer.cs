@@ -200,6 +200,7 @@
             filesToGenerateListBox.ItemHeight = 17;
             filesToGenerateListBox.Location = new Point(286, 32);
             filesToGenerateListBox.Name = "filesToGenerateListBox";
+            filesToGenerateListBox.ScrollAlwaysVisible = true;
             filesToGenerateListBox.SelectionMode = SelectionMode.MultiExtended;
             filesToGenerateListBox.Size = new Size(220, 242);
             filesToGenerateListBox.TabIndex = 10;
@@ -210,6 +211,7 @@
             projectFilesListBox.ItemHeight = 17;
             projectFilesListBox.Location = new Point(6, 32);
             projectFilesListBox.Name = "projectFilesListBox";
+            projectFilesListBox.ScrollAlwaysVisible = true;
             projectFilesListBox.SelectionMode = SelectionMode.MultiExtended;
             projectFilesListBox.Size = new Size(220, 242);
             projectFilesListBox.TabIndex = 9;
