@@ -7,7 +7,6 @@ namespace AI_XML_Doc.Models
         /// </summary>
         /// <param name="displayName">The display name of the project file.</param>
         /// <param name="path">The path of the project file.</param>
-        /// <returns>A new instance of the ProjectFile class.</returns>
         public ProjectFile(string displayName, string path)
         {
             DisplayName = displayName;

@@ -117,7 +117,7 @@
             // btnSearch
             // 
             btnSearch.FlatStyle = FlatStyle.Flat;
-            btnSearch.Location = new Point(431, 95);
+            btnSearch.Location = new Point(431, 93);
             btnSearch.Name = "btnSearch";
             btnSearch.Size = new Size(25, 25);
             btnSearch.TabIndex = 3;
@@ -129,6 +129,7 @@
             // 
             projectPathTextBox.Location = new Point(56, 93);
             projectPathTextBox.Name = "projectPathTextBox";
+            projectPathTextBox.ReadOnly = true;
             projectPathTextBox.Size = new Size(369, 25);
             projectPathTextBox.TabIndex = 2;
             // 

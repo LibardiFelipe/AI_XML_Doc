@@ -8,13 +8,13 @@ namespace AI_XML_Doc.Helpers
     public class OaiHelper
     {
         private readonly OpenAIClient _openAIClient;
-
         /// <summary>
         /// Initializes a new instance of the OaiHelper class with the specified API key.
         /// </summary>
         /// <param name="apiKey">The API key to use for authentication.</param>
-        /// <returns>A new instance of the OaiHelper class.</returns>
-        /// <exception cref="ArgumentNullException">Thrown when apiKey is null or empty.</exception>
+        /// <remarks>
+        /// This constructor creates a new instance of the OaiHelper class and initializes the OpenAI configurations with the specified API key.
+        /// </remarks>
         public OaiHelper(string apiKey)
         {
             var openAIConfigurations = new OpenAIConfigurations()
@@ -26,11 +26,11 @@ namespace AI_XML_Doc.Helpers
         }
 
         /// <summary>
-        /// Generates an XML documentation comment for a given function in the specified language, or English by default. The comment includes a brief description of what the function does, its parameters, and its return value. The comment also provides guidance on including necessary tags such as <param>, <exceptions>, and <returns> to provide additional information about each part of the function.
+        /// Generates an XML documentation comment for a given function in English or the specified language. The comment includes a brief description of what the function does, its parameters, and its return value. Use the <param> tag to provide additional information about each parameter. Use the <returns> tag to provide information about the return value. Use the <see /> tag to reference other types, methods, or properties that the function interacts with. Use the <remarks> tag to include any additional details or considerations that are not obvious to the developers reading the comment or the code.
         /// </summary>
-        /// <param name="function">The function for which to generate the XML documentation comment.</param>
-        /// <param name="language">The language in which to generate the XML documentation comment. If null, English will be used by default.</param>
-        /// <returns>The generated XML documentation comment as a string.</returns>
+        /// <param name="function">The function to generate the XML documentation comment for.</param>
+        /// <param name="language">The language to generate the comment in. If null, the comment will be generated in English.</param>
+        /// <returns>The generated XML documentation comment.</returns>
         public async ValueTask<string> GenerateXmlDocComment(string function, string? language)
         {
             var sb = new StringBuilder();
