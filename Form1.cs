@@ -11,6 +11,7 @@ namespace AI_XML_Doc
         private List<ProjectFile> _projectFiles = new();
         private List<ProjectFile> _toBeGeneratedFiles = new();
         private string? _language;
+        private bool _replaceOldDocs = false;
 
         /// <summary>
         /// Initializes a new instance of the Form1 class.
@@ -184,6 +185,8 @@ namespace AI_XML_Doc
         /// <exception cref="ArgumentNullException">Thrown if fileContent is null.</exception>
         public async ValueTask<string> ProcessFunctions(string fileContent)
         {
+            var oaiHelper = new OaiHelper(apiKeyTextBox.Text);
+
             var syntaxTree = CSharpSyntaxTree.ParseText(fileContent);
             var root = syntaxTree.GetCompilationUnitRoot();
 
@@ -197,14 +200,27 @@ namespace AI_XML_Doc
                 var methods = root.DescendantNodes().OfType<BaseMethodDeclarationSyntax>();
                 foreach (var method in methods)
                 {
-                    var hasXmlDocComment = method.GetLeadingTrivia()
-                        .Any(trivia => trivia.IsKind(SyntaxKind.SingleLineDocumentationCommentTrivia) || trivia.IsKind(SyntaxKind.MultiLineDocumentationCommentTrivia));
+                    // Check if the method already has an XML documentation comment
+                    var xmlTrivia = method.GetLeadingTrivia()
+                        .FirstOrDefault(trivia =>
+                            trivia.IsKind(SyntaxKind.SingleLineDocumentationCommentTrivia)
+                            || trivia.IsKind(SyntaxKind.MultiLineDocumentationCommentTrivia));
 
-                    if (!hasXmlDocComment)
+                    var methodSignature = method.ToString();
+                    if (xmlTrivia != default)
                     {
-                        var methodSignature = method.ToString();
+                        // Already has a comment and we shouldn't replace it.
+                        if (_replaceOldDocs is false)
+                            continue;
 
-                        var oaiHelper = new OaiHelper(apiKeyTextBox.Text);
+                        var xmlComment = inheritsFromInterface
+                            ? "/// <inheritdoc />"
+                            : await oaiHelper.GenerateXmlDocComment(methodSignature, _language);
+
+                        fileContent = fileContent.Replace(xmlTrivia.ToString(), $"{xmlComment}\n");
+                    }
+                    else
+                    {
                         var xmlComment = inheritsFromInterface
                             ? "/// <inheritdoc />"
                             : await oaiHelper.GenerateXmlDocComment(methodSignature, _language);
@@ -225,6 +241,11 @@ namespace AI_XML_Doc
         private void languageComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             UpdateLanguage();
+        }
+
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+            _replaceOldDocs = checkBox1.Checked;
         }
     }
 }

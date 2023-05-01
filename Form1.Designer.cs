@@ -31,6 +31,7 @@
             apiKeyTextBox = new TextBox();
             label1 = new Label();
             groupBox1 = new GroupBox();
+            checkBox1 = new CheckBox();
             languageComboBox = new ComboBox();
             label5 = new Label();
             btnSearch = new Button();
@@ -50,7 +51,7 @@
             // 
             // apiKeyTextBox
             // 
-            apiKeyTextBox.Location = new Point(56, 43);
+            apiKeyTextBox.Location = new Point(56, 41);
             apiKeyTextBox.Name = "apiKeyTextBox";
             apiKeyTextBox.PasswordChar = '*';
             apiKeyTextBox.Size = new Size(400, 25);
@@ -59,7 +60,7 @@
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new Point(56, 23);
+            label1.Location = new Point(56, 21);
             label1.Name = "label1";
             label1.Size = new Size(98, 17);
             label1.TabIndex = 1;
@@ -67,6 +68,7 @@
             // 
             // groupBox1
             // 
+            groupBox1.Controls.Add(checkBox1);
             groupBox1.Controls.Add(languageComboBox);
             groupBox1.Controls.Add(label5);
             groupBox1.Controls.Add(btnSearch);
@@ -76,17 +78,28 @@
             groupBox1.Controls.Add(label1);
             groupBox1.Location = new Point(11, 5);
             groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(512, 187);
+            groupBox1.Size = new Size(512, 204);
             groupBox1.TabIndex = 2;
             groupBox1.TabStop = false;
             groupBox1.Text = "Settings";
+            // 
+            // checkBox1
+            // 
+            checkBox1.AutoSize = true;
+            checkBox1.Location = new Point(56, 176);
+            checkBox1.Name = "checkBox1";
+            checkBox1.Size = new Size(159, 21);
+            checkBox1.TabIndex = 7;
+            checkBox1.Text = "Replace old XML Docs";
+            checkBox1.UseVisualStyleBackColor = true;
+            checkBox1.CheckedChanged += checkBox1_CheckedChanged;
             // 
             // languageComboBox
             // 
             languageComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
             languageComboBox.FormattingEnabled = true;
             languageComboBox.Items.AddRange(new object[] { "ENGLISH", "BRAZILIAN PORTUGUESE", "JAPANESE" });
-            languageComboBox.Location = new Point(56, 147);
+            languageComboBox.Location = new Point(56, 145);
             languageComboBox.Name = "languageComboBox";
             languageComboBox.Size = new Size(400, 25);
             languageComboBox.TabIndex = 6;
@@ -95,7 +108,7 @@
             // label5
             // 
             label5.AutoSize = true;
-            label5.Location = new Point(56, 127);
+            label5.Location = new Point(56, 125);
             label5.Name = "label5";
             label5.Size = new Size(128, 17);
             label5.TabIndex = 5;
@@ -114,7 +127,7 @@
             // 
             // projectPathTextBox
             // 
-            projectPathTextBox.Location = new Point(56, 95);
+            projectPathTextBox.Location = new Point(56, 93);
             projectPathTextBox.Name = "projectPathTextBox";
             projectPathTextBox.Size = new Size(369, 25);
             projectPathTextBox.TabIndex = 2;
@@ -122,7 +135,7 @@
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new Point(56, 75);
+            label2.Location = new Point(56, 73);
             label2.Name = "label2";
             label2.Size = new Size(78, 17);
             label2.TabIndex = 3;
@@ -137,7 +150,7 @@
             groupBox2.Controls.Add(label3);
             groupBox2.Controls.Add(filesToGenerateListBox);
             groupBox2.Controls.Add(projectFilesListBox);
-            groupBox2.Location = new Point(11, 194);
+            groupBox2.Location = new Point(11, 215);
             groupBox2.Name = "groupBox2";
             groupBox2.Size = new Size(512, 322);
             groupBox2.TabIndex = 3;
@@ -220,7 +233,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 17F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(534, 526);
+            ClientSize = new Size(534, 546);
             Controls.Add(groupBox2);
             Controls.Add(groupBox1);
             Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point);
@@ -255,5 +268,6 @@
         private ListBox projectFilesListBox;
         private Label label5;
         private ComboBox languageComboBox;
+        private CheckBox checkBox1;
     }
 }
