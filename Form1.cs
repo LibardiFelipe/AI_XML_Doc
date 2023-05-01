@@ -188,7 +188,7 @@ namespace AI_XML_Doc
             var oaiHelper = new OaiHelper(apiKeyTextBox.Text);
 
             var syntaxTree = CSharpSyntaxTree.ParseText(fileContent);
-            var root = syntaxTree.GetCompilationUnitRoot();
+            var root = await syntaxTree.GetRootAsync();
 
             var classes = root.DescendantNodes().OfType<TypeDeclarationSyntax>();
             foreach (var @class in classes)
@@ -197,16 +197,18 @@ namespace AI_XML_Doc
                 var inheritsFromInterface = @class.BaseList?.Types
                     .Any(type => type.ToString() == $"I{className}") ?? false;
 
-                var methods = root.DescendantNodes().OfType<BaseMethodDeclarationSyntax>();
+                var methods = @class.Members.OfType<BaseMethodDeclarationSyntax>();
                 foreach (var method in methods)
                 {
+                    var oldFullMethod = method.ToFullString();
+                    var methodSignature = method.ToString();
+
                     // Check if the method already has an XML documentation comment
                     var xmlTrivia = method.GetLeadingTrivia()
                         .FirstOrDefault(trivia =>
                             trivia.IsKind(SyntaxKind.SingleLineDocumentationCommentTrivia)
                             || trivia.IsKind(SyntaxKind.MultiLineDocumentationCommentTrivia));
 
-                    var methodSignature = method.ToString();
                     if (xmlTrivia != default)
                     {
                         // Already has a comment and we shouldn't replace it.
@@ -217,7 +219,11 @@ namespace AI_XML_Doc
                             ? "/// <inheritdoc />"
                             : await oaiHelper.GenerateXmlDocComment(methodSignature, _language);
 
-                        fileContent = fileContent.Replace($"///{xmlTrivia}", $"{xmlComment}\n");
+                        var newTrivia = SyntaxFactory.ParseLeadingTrivia($"{xmlComment}\n");
+                        var newMethod = method.WithLeadingTrivia(newTrivia);
+
+                        fileContent = fileContent.Replace(oldFullMethod,
+                            newMethod.ToFullString());
                     }
                     else
                     {
@@ -225,7 +231,11 @@ namespace AI_XML_Doc
                             ? "/// <inheritdoc />"
                             : await oaiHelper.GenerateXmlDocComment(methodSignature, _language);
 
-                        fileContent = fileContent.Replace(methodSignature, $"{xmlComment}\n{methodSignature}");
+                        var newTrivia = SyntaxFactory.ParseLeadingTrivia($"{xmlComment}\n");
+                        var newMethod = method.WithLeadingTrivia(newTrivia);
+
+                        fileContent = fileContent.Replace(methodSignature,
+                            newMethod.ToFullString());
                     }
                 }
             }
