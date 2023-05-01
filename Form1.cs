@@ -187,19 +187,30 @@ namespace AI_XML_Doc
             var syntaxTree = CSharpSyntaxTree.ParseText(fileContent);
             var root = syntaxTree.GetCompilationUnitRoot();
 
-            var methods = root.DescendantNodes().OfType<BaseMethodDeclarationSyntax>();
-            foreach (var method in methods)
+            var classes = root.DescendantNodes().OfType<ClassDeclarationSyntax>();
+            foreach (var @class in classes)
             {
-                var hasXmlDocComment = method.GetLeadingTrivia()
-                    .Any(trivia => trivia.IsKind(SyntaxKind.SingleLineDocumentationCommentTrivia) || trivia.IsKind(SyntaxKind.MultiLineDocumentationCommentTrivia));
+                var className = @class.Identifier.ValueText;
+                var inheritsFromInterface = @class.BaseList?.Types
+                    .Any(type => type.ToString() == $"I{className}") ?? false;
 
-                if (!hasXmlDocComment)
+                var methods = root.DescendantNodes().OfType<BaseMethodDeclarationSyntax>();
+                foreach (var method in methods)
                 {
-                    var oaiHelper = new OaiHelper(apiKeyTextBox.Text);
-                    var methodSignature = method.ToString();
-                    var xmlComment = await oaiHelper.GenerateXmlDocComment(methodSignature, _language);
+                    var hasXmlDocComment = method.GetLeadingTrivia()
+                        .Any(trivia => trivia.IsKind(SyntaxKind.SingleLineDocumentationCommentTrivia) || trivia.IsKind(SyntaxKind.MultiLineDocumentationCommentTrivia));
 
-                    fileContent = fileContent.Replace(methodSignature, $"{xmlComment}\n{methodSignature}");
+                    if (!hasXmlDocComment)
+                    {
+                        var methodSignature = method.ToString();
+
+                        var oaiHelper = new OaiHelper(apiKeyTextBox.Text);
+                        var xmlComment = inheritsFromInterface
+                            ? "/// <inheritdoc />"
+                            : await oaiHelper.GenerateXmlDocComment(methodSignature, _language);
+
+                        fileContent = fileContent.Replace(methodSignature, $"{xmlComment}\n{methodSignature}");
+                    }
                 }
             }
 
