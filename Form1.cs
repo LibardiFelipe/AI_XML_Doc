@@ -217,7 +217,7 @@ namespace AI_XML_Doc
                             ? "/// <inheritdoc />"
                             : await oaiHelper.GenerateXmlDocComment(methodSignature, _language);
 
-                        fileContent = fileContent.Replace(xmlTrivia.ToString(), $"{xmlComment}\n");
+                        fileContent = fileContent.Replace($"///{xmlTrivia}", $"{xmlComment}\n");
                     }
                     else
                     {
