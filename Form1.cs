@@ -225,7 +225,7 @@ namespace AI_XML_Doc
                             ? "/// <inheritdoc />"
                             : await oaiHelper.GenerateXmlDocComment(methodSignature, _language);
 
-                        var newTrivia = SyntaxFactory.ParseLeadingTrivia($"{xmlComment}\n");
+                        var newTrivia = SyntaxFactory.ParseLeadingTrivia($"{xmlComment}{Environment.NewLine}");
                         var newMethod = method.WithLeadingTrivia(newTrivia);
 
                         fileContent = fileContent.Replace(oldFullMethod,
@@ -237,7 +237,7 @@ namespace AI_XML_Doc
                             ? "/// <inheritdoc />"
                             : await oaiHelper.GenerateXmlDocComment(methodSignature, _language);
 
-                        var newTrivia = SyntaxFactory.ParseLeadingTrivia($"{xmlComment}\n");
+                        var newTrivia = SyntaxFactory.ParseLeadingTrivia($"{xmlComment}{Environment.NewLine}");
                         var newMethod = method.WithLeadingTrivia(newTrivia);
 
                         fileContent = fileContent.Replace(methodSignature,
