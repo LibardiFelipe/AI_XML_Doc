@@ -187,7 +187,7 @@ namespace AI_XML_Doc
             var syntaxTree = CSharpSyntaxTree.ParseText(fileContent);
             var root = syntaxTree.GetCompilationUnitRoot();
 
-            var classes = root.DescendantNodes().OfType<ClassDeclarationSyntax>();
+            var classes = root.DescendantNodes().OfType<TypeDeclarationSyntax>();
             foreach (var @class in classes)
             {
                 var className = @class.Identifier.ValueText;

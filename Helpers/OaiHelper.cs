@@ -37,10 +37,11 @@ namespace AI_XML_Doc.Helpers
             sb.AppendLine("Assume you are building a large project in C#.");
             sb.AppendLine("You have been asked to provide XML documentation comments for each function to help other developers understand how to use them.");
             sb.AppendLine($"Given the function that I will further provide you, write the XML documentation comment for it IN {(language ?? "english").ToUpper()}, including a brief description of what the function does, its parameters, and its return value.");
-            sb.AppendLine("Make sure to include any necessary tags, such as <param>, <exceptions> and <returns>, to provide additional information about each part of the function.");
-            sb.AppendLine("IMPORTANT: Please provide ONLY THE XML documentation comment.");
-
-            sb.AppendLine("Function:");
+            sb.AppendLine("Make sure to include any necessary tags, such as <param> and <returns> to provide additional information about each part of the function.");
+            sb.AppendLine("You do not need to add a <returns> tag if the function returns void.");
+            sb.AppendLine("If the function interacts with other types, methods, or properties, use the <see /> tag to reference them, helping developers understand the relationship between them.");
+            sb.AppendLine("Include a <remarks> tag only if there are any additional details or considerations that are not obvious to the developers reading the comment or the code.");
+            sb.AppendLine("IMPORTANT: Please return ONLY THE XML documentation comment and NOTHING MORE.");
             sb.AppendLine("````");
             sb.AppendLine(function);
             sb.AppendLine("````");
